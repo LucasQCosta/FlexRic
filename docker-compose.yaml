@@ -1,0 +1,41 @@
+version: "3.7"
+
+networks:
+  front-tier:
+    ipam:
+      driver: flexric
+      config:
+        - subnet: "172.16.238.0/24"
+        - subnet: "2001:3984:3989::/64"
+
+services:
+  flexric:
+    image: flexric_experiments
+    container_name: Flexric
+    networks:
+      front-tier:
+        ipv4_address: 172.16.238.1
+        ipv6_address: 2001:3984:3989::10
+    entrypoint: cd flexric && && ./build/examples/ric/nearRT-RIC -c flexric.conf
+  
+  cu:
+    image: flexric_experiments
+    container_name: cu
+    entrypoint: cd flexric && && ./build/examples/emulator/agent/emu_agent_gnb_cu -c flexric.conf
+    depends_on:
+      -flexric
+    networks:
+      front-tier:
+        ipv4_address: 172.16.238.2
+        ipv6_address: 2001:3984:3989::10
+  
+  du:
+    image: flexric_experiments
+    container_name: cu
+    entrypoint: cd flexric && && ./build/examples/emulator/agent/emu_agent_gnb_du -c flexric.conf
+    depends_on:
+        -flexric
+    networks:
+      front-tier:
+        ipv4_address: 172.16.238.3
+        ipv6_address: 2001:3984:3989::10
