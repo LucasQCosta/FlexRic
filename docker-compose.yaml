@@ -1,26 +1,30 @@
-version: "3.7"
-
-networks: 
-  default: 
-    external:
-      name: flexric_connection
+version: "3.9"
 
 services:
   flexric:
-    image: flexric_experiments
+    image: flexric
     container_name: Flexric
-    command: sh -c "echo -e "[NEAR-RIC]\nNEAR_RIC_IP = 172.18.0.2\n\n[XAPP]\nDB_DIR=/tmp/" > flexric/flexric.conf && flexric/build/examples/ric/nearRT-RIC -c flexric/flexric.conf"
+    #networks:
+    # - flexric_connection
+    command: bash -c "hostname -i ; printf '[NEAR-RIC]\nNEAR_RIC_IP = '$(hostname -i) '\n\n[XAPP] \n DB_DIR= /tmp/ ' > flexric/flexric.conf ; cat flexric/flexric.conf ; ./flexric/build/examples/ric/nearRT-RIC -c ./flexric/flexric.conf"
   
-  cu:
-    image: flexric_experiments
-    container_name: Cu
-    command: sh -c "echo -e "[NEAR-RIC]\nNEAR_RIC_IP = 172.18.0.2\n\n[XAPP]\nDB_DIR = /tmp/" > flexric/flexric.conf && flexric/build/examples/emulator/agent/emu_agent_gnb_cu -c flexric/flexric.conf"
-    depends_on:
-      - flexric
+  # cu:
+  #   image: flexric
+  #   container_name: Cu
+  #   #networks:
+  #   #  - flexric_connection
+  #   command: bash -c "printf '[NEAR-RIC]\nNEAR_RIC_IP = Flexric\n\n[XAPP]\nDB_DIR=/tmp/' > flexric/flexric.conf ; ./flexric/build/examples/emulator/agent/emu_agent_gnb_cu -c flexric/flexric.conf"
+  #   depends_on:
+  #     - flexric
   
-  du:
-    image: flexric_experiments
-    container_name: Du
-    command: sh -c "echo -e "[NEAR-RIC]\nNEAR_RIC_IP = 172.18.0.2\n\n[XAPP]\nDB_DIR = /tmp/" > flexric/flexric.conf && flexric/build/examples/emulator/agent/emu_agent_gnb_du -c flexric/flexric.conf"
-    depends_on:
-        - flexric
+  # du:
+  #   image: flexric
+  #   container_name: Du
+  #   #networks:
+  #   #  - flexric_connection
+  #   command: sh -c "printf '[NEAR-RIC]\nNEAR_RIC_IP = Flexric\n\n[XAPP]\nDB_DIR=/tmp/' > flexric/flexric.conf ; ./flexric/build/examples/emulator/agent/emu_agent_gnb_du -c flexric/flexric.conf"
+  #   depends_on:
+  #       - flexric
+
+#networks:
+#  flexric_connection:
