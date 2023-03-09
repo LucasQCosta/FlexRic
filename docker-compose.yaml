@@ -4,27 +4,29 @@ services:
   flexric:
     image: flexric
     container_name: Flexric
-    #networks:
-    # - flexric_connection
-    command: bash -c "hostname -i ; printf '[NEAR-RIC]\nNEAR_RIC_IP = '$(hostname -i) '\n\n[XAPP] \n DB_DIR= /tmp/ ' > flexric/flexric.conf ; cat flexric/flexric.conf ; ./flexric/build/examples/ric/nearRT-RIC -c ./flexric/flexric.conf"
+    networks:
+      - flexric_connection
+    command: bash -c "sed -ie 's/127.0.0.1/'$(hostname -i)'/' flexric/flexric.conf && ./flexric/build/examples/ric/nearRT-RIC -c ./flexric/flexric.conf"
   
-  # cu:
-  #   image: flexric
-  #   container_name: Cu
-  #   #networks:
-  #   #  - flexric_connection
-  #   command: bash -c "printf '[NEAR-RIC]\nNEAR_RIC_IP = Flexric\n\n[XAPP]\nDB_DIR=/tmp/' > flexric/flexric.conf ; ./flexric/build/examples/emulator/agent/emu_agent_gnb_cu -c flexric/flexric.conf"
-  #   depends_on:
-  #     - flexric
-  
-  # du:
-  #   image: flexric
-  #   container_name: Du
-  #   #networks:
-  #   #  - flexric_connection
-  #   command: sh -c "printf '[NEAR-RIC]\nNEAR_RIC_IP = Flexric\n\n[XAPP]\nDB_DIR=/tmp/' > flexric/flexric.conf ; ./flexric/build/examples/emulator/agent/emu_agent_gnb_du -c flexric/flexric.conf"
-  #   depends_on:
-  #       - flexric
+  cu:
+   image: flexric
+   container_name: Cu
+   networks:
+    - flexric_connection
+   command: bash -c "echo $(hostname -i) && apt install -y iputils-ping && ping Flexric"
+   #bash -c "sed -ie 's/127.0.0.1/'$(hostname -i)'/' flexric/flexric.conf && sed -ie 's/.2/'.4'/' flexric/flexric.conf && ./flexric/build/examples/emulator/agent/emu_agent_gnb_cu -c flexric/flexric.conf"
+   depends_on:
+     - flexric
 
-#networks:
-#  flexric_connection:
+  du:
+   image: flexric
+   container_name: Du
+   networks:
+    - flexric_connection
+   command: bash -c "echo $(hostname -i) && sed -ie 's/127.0.0.1/'$(hostname -i)'/' flexric/flexric.conf && sed -ie 's/.3/.2/' flexric/flexric.conf
+    - ./flexric/build/examples/emulator/agent/emu_agent_gnb_du -c flexric/flexric.conf"
+   depends_on:
+       - flexric
+
+networks:
+  flexric_connection:
