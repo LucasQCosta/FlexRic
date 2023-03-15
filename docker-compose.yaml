@@ -1,3 +1,4 @@
+
 version: "3.9"
 
 services:
@@ -13,7 +14,7 @@ services:
    container_name: Cu
    networks:
     - flexric_connection
-   command: bash -c "echo $(hostname -i) && apt install -y iputils-ping && ping Flexric"
+   command: sh -c "sed -ie 's/127.0.0.1/'$(nslookup Flexric | grep -o '.........2$')'/' flexric/flexric.conf && ./flexric/build/examples/emulator/agent/emu_agent_gnb_cu -c flexric/flexric.conf"
    #bash "apt install -y dnsutils && var=$(nslookup Flexric | grep -o '.........2$') && sed -ie 's/127.0.0.1/'$var'/' flexric/flexric.conf && ./flexric/build/examples/emulator/agent/emu_agent_gnb_cu -c flexric/flexric.conf"
    depends_on:
      - flexric
@@ -23,7 +24,7 @@ services:
    container_name: Du
    networks:
     - flexric_connection
-   command: bash "apt install -y dnsutils && var=$(nslookup Flexric | grep -o '.........2$') && sed -ie 's/127.0.0.1/'$var'/' flexric/flexric.conf && ./flexric/build/examples/emulator/agent/emu_agent_gnb_du -c flexric/flexric.conf"
+   command: sh -c "sed -ie 's/127.0.0.1/'$(nslookup Flexric | grep -o '.........2$')'/' flexric/flexric.conf && ./flexric/build/examples/emulator/agent/emu_agent_gnb_du -c flexric/flexric.conf"
    depends_on:
        - flexric
 
