@@ -7,15 +7,18 @@ services:
     container_name: Flexric
     networks:
       - flexric_connection
-    command: bash -c "sed -ie 's/127.0.0.1/'$(hostname -i)'/' flexric/flexric.conf && ./flexric/build/examples/ric/nearRT-RIC -c ./flexric/flexric.conf"
+    stdin_open: true 
+    tty: true
+    command: sh -c "sed -ie 's/127.0.0.1/'$(hostname -i)'/' flexric/flexric.conf && ./flexric/build/examples/ric/nearRT-RIC -c ./flexric/flexric.conf"
   
   cu:
    image: flexric
    container_name: Cu
    networks:
     - flexric_connection
+   stdin_open: true 
+   tty: true
    command: sh -c "sed -ie 's/127.0.0.1/'$(nslookup Flexric | grep -o '.........2$')'/' flexric/flexric.conf && ./flexric/build/examples/emulator/agent/emu_agent_gnb_cu -c flexric/flexric.conf"
-   #bash "apt install -y dnsutils && var=$(nslookup Flexric | grep -o '.........2$') && sed -ie 's/127.0.0.1/'$var'/' flexric/flexric.conf && ./flexric/build/examples/emulator/agent/emu_agent_gnb_cu -c flexric/flexric.conf"
    depends_on:
      - flexric
 
@@ -24,9 +27,33 @@ services:
    container_name: Du
    networks:
     - flexric_connection
+   stdin_open: true 
+   tty: true
    command: sh -c "sed -ie 's/127.0.0.1/'$(nslookup Flexric | grep -o '.........2$')'/' flexric/flexric.conf && ./flexric/build/examples/emulator/agent/emu_agent_gnb_du -c flexric/flexric.conf"
    depends_on:
        - flexric
+
+  oai:
+   image: oai18
+   container_name: OAI
+   networks:
+    - flexric_connection
+   stdin_open: true 
+   tty: true
+   command: bash
+   depends_on:
+       - flexric     
+
+  srsran:
+   image: srsran18
+   container_name: srsRAN
+   networks:
+    - flexric_connection
+   stdin_open: true 
+   tty: true
+   command: bash
+   depends_on:
+       - flexric  
 
 networks:
   flexric_connection:
