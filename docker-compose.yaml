@@ -51,6 +51,3 @@ services:
 
 networks:
   flexric_connection:
-
-networks:
-  flexric_connection:
