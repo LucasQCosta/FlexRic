@@ -31,7 +31,7 @@ services:
     - flexric_connection
    stdin_open: true 
    tty: true
-   command: sh -c "sed -ie 's/127.0.0.1/'$(nslookup Flexric | grep -o '.........2$')'/' flexric/flexric.conf && ./flexric/build/examples/emulator/agent/emu_agent_gnb_du -c flexric/flexric.conf && bash"
+   command: sh -c "sed -ie 's/127.0.0.1/'$(nslookup Flexric | grep -o '.........2$')'/' flexric/flexric.conf && ./flexric/build/examples/emulator/agent/emu_agent_gnb_du -c flexric/flexric.conf"
    depends_on:
        - flexric
 
